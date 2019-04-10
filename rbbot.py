@@ -86,6 +86,14 @@ class RBTorrentTrawler:
 			self.log.info('Download failed, {0}'.format(r.status_code))
 			
 		return 0
+
+	# magnet link로 url 파일 만들기
+	def make_magnet_file(self, magnet_link, fname):
+		contents = "[{{000214A0-0000-0000-C000-000000000046}}]\nProp3=19,0\n[InternetShortcut]\nIDList=\nURL={0}\n".format(magnet_link)
+		f = open(fname, 'w')
+		f.write(contents)
+		f.close()
+		return 0
 	
 	# 확장자 추출
 	def get_extension(self, url):
@@ -235,6 +243,8 @@ class RBTorrentTrawler:
 					if(tline.find('td').get_text().strip() == 'Torrent:'):
 						tor_src = self.base_url + tline.find('td', {'class':'lista'}).find('a')['href']
 						self.log.info('Torrent    : {0}'.format(tor_src))
+						magnet_src = tline.find('td', {'class':'lista'}).find_all('a')[1]['href']
+						self.log.info('Magnet     : {0}'.format(magnet_src))
 					elif(tline.find('td').get_text().strip() == 'Poster:'):
 						poster_src = tline.find('td', {'class':'lista'}).find('img')['src']
 						#self.log.info('Poster     : {0}'.format(poster_src))
@@ -243,8 +253,9 @@ class RBTorrentTrawler:
 						self.log.info('URL        : {0}'.format(sshot_url))
 						
 				if (type == 'Torrent'):
-					if(self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))) < 0): return
+					#if(self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))) < 0): return
 					#self.log.info('FakeDownloading... {0} >> {1}'.format(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))))
+					if(self.make_magnet_file(magnet_src, '{0}/{1}.url'.format(dir_name, title)) < 0): return
 				else:
 					# 스크린샷 페이지 로딩
 					self.driver.get(sshot_url)
