@@ -154,6 +154,66 @@ class RBTorrentTrawler:
 		
 		return False
 
+
+	def download_target(self, item_url, type, dir_name, title):
+		self.driver.get(item_url)
+		item_html = self.driver.page_source
+		item_soup = BeautifulSoup(item_html, 'html.parser')
+		
+		tlines = item_soup.find('table', {'class':'lista-rounded'}).find('tbody').find_all('tr', recursive=False)[1].find('table').find('tbody').find_all('tr', recursive=False)
+		for tline in tlines:
+			if(tline.find('td').get_text().strip() == 'Torrent:'):
+				tor_src = self.base_url + tline.find('td', {'class':'lista'}).find('a')['href']
+				self.log.info('Torrent    : {0}'.format(tor_src))
+				magnet_src = tline.find('td', {'class':'lista'}).find_all('a')[1]['href']
+				self.log.info('Magnet     : {0}'.format(magnet_src))
+			elif(tline.find('td').get_text().strip() == 'Poster:'):
+				poster_src = tline.find('td', {'class':'lista'}).find('img')['src']
+				#self.log.info('Poster     : {0}'.format(poster_src))
+			elif(tline.find('td').get_text().strip() == 'Description:'):
+				sshot_url = tline.find('td', {'class':'lista'}).find('a')['href']
+				self.log.info('URL        : {0}'.format(sshot_url))
+				
+		if (type == 'Torrent'):
+			#if(self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))) < 0): return
+			#self.log.info('FakeDownloading... {0} >> {1}'.format(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))))
+			if(self.make_magnet_file(magnet_src, '{0}/{1}.url'.format(dir_name, title)) < 0): return
+		else:
+			# 스크린샷 페이지 로딩
+			self.driver.get(sshot_url)
+			sshot_html = self.driver.page_source
+			sshot_soup = BeautifulSoup(sshot_html, 'html.parser')
+			
+			sshot_src = sshot_soup.find('div', {'id':'image_view'}).find('a')['href']
+			self.log.info('ScreenShot : {0}'.format(sshot_src))
+			
+			#self.log.info('dir_name: {0}'.format(dir_name))
+			if not os.path.exists(dir_name):
+				os.makedirs(dir_name)
+				
+			#self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src)))
+			#self.file_download(poster_src, '{0}/{1}_poster.{2}'.format(dir_name, title, self.get_extension(poster_src)))
+			if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, self.get_extension(sshot_src))) < 0): return
+
+
+	def retrieve_target(self, target_titles, dir_name):
+		for title in target_titles:
+			r_url = self.base_url + '/torrents.php?search={0}&category=4'.format(title)
+			self.driver.get(r_url)
+			html = self.driver.page_source
+			soup = BeautifulSoup(html, 'html.parser')
+
+			list = soup.find_all('tr', {'class':'lista2'})
+
+			if len(list) > 1:
+				self.log.info ('Too many search result... {0}'.format(r_url))
+				return
+
+			for item in list:
+				title_info = item.find_all('td', {'class':'lista'})[1]
+				item_url = self.base_url + title_info.find('a')['href']
+				self.download_target(item_url, 'Torrent', dir_name, title)
+
 	
 	# 주어진 시작페이지와 날짜에 대한 리스트 페이지를 차례로 열면서 각 포스트에 토렌트 및 스크린샷 파일을 다운로드
 	def get_torrent_seeds(self, start_page, target_date, start_post_title, type):
@@ -169,12 +229,16 @@ class RBTorrentTrawler:
 			sleep(1)
 		self.driver.find_element_by_xpath('/html/body/div/div/a').click()
 		for i in range(1, 15):
-			self.log.info ('Input CAPCHA waiting... {0}'.format(i))
+			self.log.info ('Input reCAPTCHA waiting... {0}'.format(i))
 			sleep(1)
 
 		if (start_page != None): page = start_page - 1
 		if (start_post_title != None): started = False
-		if (type == 'Torrent'): target_titles = self.get_list_of_titles_in_a_directory(dir_name)
+		if (type == 'Torrent' or type == 'Retrieve'): target_titles = self.get_list_of_titles_in_a_directory(dir_name)
+
+		if type == 'Retrieve':
+			self.retrieve_target(target_titles, dir_name)
+			return
 		
 		while completed == False:
 			page = page + 1
@@ -233,6 +297,8 @@ class RBTorrentTrawler:
 				self.log.info('[TARGET] ' + title + ' / ' + item_url + ' / ' + date + ' ' + time)
 				
 				# 아이템 페이지 로딩
+				self.download_target(item_url, type, dir_name, title)
+				'''
 				self.driver.get(item_url)
 				item_html = self.driver.page_source
 				item_soup = BeautifulSoup(item_html, 'html.parser')
@@ -272,10 +338,7 @@ class RBTorrentTrawler:
 					#self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src)))
 					#self.file_download(poster_src, '{0}/{1}_poster.{2}'.format(dir_name, title, self.get_extension(poster_src)))
 					if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, self.get_extension(sshot_src))) < 0): return
-				
-				#completed = True
-				#break
-				#sleep(1)
+				'''
 				
 
 	def page_load_text(self, url):
@@ -316,7 +379,7 @@ def show_help():
 
 				
 if __name__ == '__main__':
-	if (len(sys.argv) != 4 and len(sys.argv) != 5):
+	if (len(sys.argv) < 3 or len(sys.argv) > 5):
 		show_help()
 		sys.exit(0)
 		
@@ -324,24 +387,26 @@ if __name__ == '__main__':
 		type = 'ScreenShot'
 	elif (sys.argv[2] == 't'):
 		type = 'Torrent'
+	elif (sys.argv[2] == 'r'):
+		type = 'Retrieve'
 	else:
 		show_help()
 		sys.exit()
 	
-	start_post = None
-	if (len(sys.argv) == 5):
-		start_post = sys.argv[4]
-		
-	date = sys.argv[1]
-	page = int(sys.argv[3])
-	
 	bjrt = RBTorrentTrawler()
 	bjrt.init_driver()
+
+	page = 1
+	start_post = None
+	if (len(sys.argv) >= 4):
+		page = int(sys.argv[3])
+	if (len(sys.argv) == 5):
+		start_post = sys.argv[4]
+
+	date = sys.argv[1]
+
 	bjrt.get_torrent_seeds(page, date, start_post, type)
 
-	#bjrt.get_torrent_seeds(63, '2019-03-12', None, 'ScreenShot')
-	#bjrt.get_torrent_seeds(63, '2019-03-12', None, 'Torrent')
-	
 	#bjrt.page_load_text('http://rarbg.is/torrent/thyuz9m')
 
 	
