@@ -184,7 +184,9 @@ class RBTorrentTrawler:
 			sshot_html = self.driver.page_source
 			sshot_soup = BeautifulSoup(sshot_html, 'html.parser')
 			
-			sshot_src = sshot_soup.find('div', {'id':'image_view'}).find('a')['href']
+			sshot_src = sshot_soup.find('div', {'id':'image_view'})
+			if (sshot_src == None): return
+			sshot_src = sshot_soup.find('a')['href']
 			self.log.info('ScreenShot : {0}'.format(sshot_src))
 			
 			#self.log.info('dir_name: {0}'.format(dir_name))
@@ -298,48 +300,7 @@ class RBTorrentTrawler:
 				
 				# 아이템 페이지 로딩
 				self.download_target(item_url, type, dir_name, title)
-				'''
-				self.driver.get(item_url)
-				item_html = self.driver.page_source
-				item_soup = BeautifulSoup(item_html, 'html.parser')
-				
-				
-				tlines = item_soup.find('table', {'class':'lista-rounded'}).find('tbody').find_all('tr', recursive=False)[1].find('table').find('tbody').find_all('tr', recursive=False)
-				for tline in tlines:
-					if(tline.find('td').get_text().strip() == 'Torrent:'):
-						tor_src = self.base_url + tline.find('td', {'class':'lista'}).find('a')['href']
-						self.log.info('Torrent    : {0}'.format(tor_src))
-						magnet_src = tline.find('td', {'class':'lista'}).find_all('a')[1]['href']
-						self.log.info('Magnet     : {0}'.format(magnet_src))
-					elif(tline.find('td').get_text().strip() == 'Poster:'):
-						poster_src = tline.find('td', {'class':'lista'}).find('img')['src']
-						#self.log.info('Poster     : {0}'.format(poster_src))
-					elif(tline.find('td').get_text().strip() == 'Description:'):
-						sshot_url = tline.find('td', {'class':'lista'}).find('a')['href']
-						self.log.info('URL        : {0}'.format(sshot_url))
-						
-				if (type == 'Torrent'):
-					#if(self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))) < 0): return
-					#self.log.info('FakeDownloading... {0} >> {1}'.format(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))))
-					if(self.make_magnet_file(magnet_src, '{0}/{1}.url'.format(dir_name, title)) < 0): return
-				else:
-					# 스크린샷 페이지 로딩
-					self.driver.get(sshot_url)
-					sshot_html = self.driver.page_source
-					sshot_soup = BeautifulSoup(sshot_html, 'html.parser')
-					
-					sshot_src = sshot_soup.find('div', {'id':'image_view'}).find('a')['href']
-					self.log.info('ScreenShot : {0}'.format(sshot_src))
-					
-					#self.log.info('dir_name: {0}'.format(dir_name))
-					if not os.path.exists(dir_name):
-						os.makedirs(dir_name)
-						
-					#self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src)))
-					#self.file_download(poster_src, '{0}/{1}_poster.{2}'.format(dir_name, title, self.get_extension(poster_src)))
-					if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, self.get_extension(sshot_src))) < 0): return
-				'''
-				
+
 
 	def page_load_text(self, url):
 	
@@ -373,7 +334,7 @@ class RBTorrentTrawler:
 
 
 def show_help():
-	print('Usage: {0} <date> <type> <page_num>'.format(sys.argv[0]))
+	print('Usage: {0} <date> <type> <page_num> [<start_post>]'.format(sys.argv[0]))
 	print('     <date> format: yyyy-mm-dd')
 	print('     <type> : s(creenshot) / t(orrent)')
 
