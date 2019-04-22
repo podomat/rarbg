@@ -63,6 +63,12 @@ class RBTorrentTrawler:
 		self.driver = webdriver.Chrome(self.webdriver_path, chrome_options=options)
 		#self.driver = webdriver.Firefox(executable_path = self.webdriver_path)
 		#self.driver.implicitly_wait(5)
+
+
+	# 제목에서 파일명으로 사용불가한 문자 삭제
+	def title_to_fname(self, title):
+		fname = title.replace(':','_').replace('/','_')
+		return fname
 		
 	
 	# 파일 다운로드
@@ -177,6 +183,7 @@ class RBTorrentTrawler:
 		if (type == 'Torrent'):
 			#if(self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))) < 0): return
 			#self.log.info('FakeDownloading... {0} >> {1}'.format(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src))))
+			title = self.title_to_fname(title)
 			if(self.make_magnet_file(magnet_src, '{0}/{1}.url'.format(dir_name, title)) < 0): return
 		else:
 			# 스크린샷 페이지 로딩
@@ -195,9 +202,11 @@ class RBTorrentTrawler:
 				
 			#self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src)))
 			#self.file_download(poster_src, '{0}/{1}_poster.{2}'.format(dir_name, title, self.get_extension(poster_src)))
+			title = self.title_to_fname(title)
 			if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, self.get_extension(sshot_src))) < 0): return
 
 
+	# 제목(title)으로 검색하여 torrent를 다운로드 (제목(title)이 파일명으로 된 poster 파일만 있을 때 사용)
 	def retrieve_target(self, target_titles, dir_name):
 		for title in target_titles:
 			r_url = self.base_url + '/torrents.php?search={0}&category=4'.format(title)
@@ -336,7 +345,7 @@ class RBTorrentTrawler:
 def show_help():
 	print('Usage: {0} <date> <type> <page_num> [<start_post>]'.format(sys.argv[0]))
 	print('     <date> format: yyyy-mm-dd')
-	print('     <type> : s(creenshot) / t(orrent)')
+	print('     <type> : s(creenshot) / t(orrent) / r(etrieve)')
 
 				
 if __name__ == '__main__':
