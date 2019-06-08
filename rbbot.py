@@ -193,7 +193,7 @@ class RBTorrentTrawler:
 			
 			sshot_src = sshot_soup.find('div', {'id':'image_view'})
 			if (sshot_src == None): return
-			sshot_src = sshot_soup.find('a')['href']
+			sshot_src = sshot_src.find('a')['href']
 			self.log.info('ScreenShot : {0}'.format(sshot_src))
 			
 			#self.log.info('dir_name: {0}'.format(dir_name))
