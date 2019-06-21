@@ -193,7 +193,8 @@ class RBTorrentTrawler:
 			
 			sshot_src = sshot_soup.find('div', {'id':'image_view'})
 			if (sshot_src == None): return
-			sshot_src = sshot_soup.find('a')['href']
+			#self.log.info(sshot_src)
+			sshot_src = sshot_src.find('a')['href']
 			self.log.info('ScreenShot : {0}'.format(sshot_src))
 			
 			#self.log.info('dir_name: {0}'.format(dir_name))
@@ -203,7 +204,9 @@ class RBTorrentTrawler:
 			#self.file_download(tor_src, '{0}/{1}.{2}'.format(dir_name, title, self.get_extension(tor_src)))
 			#self.file_download(poster_src, '{0}/{1}_poster.{2}'.format(dir_name, title, self.get_extension(poster_src)))
 			title = self.title_to_fname(title)
-			if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, self.get_extension(sshot_src))) < 0): return
+			extension = self.get_extension(sshot_src)
+			if len(extension) > 5: extension = 'jpg'
+			if(self.file_download(sshot_src, '{0}/{1}_screenshot.{2}'.format(dir_name, title, extension)) < 0): return
 
 
 	# 제목(title)으로 검색하여 torrent를 다운로드 (제목(title)이 파일명으로 된 poster 파일만 있을 때 사용)
