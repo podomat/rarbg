@@ -27,6 +27,7 @@ class RBTorrentTrawler:
 		self.human_check_url = self.base_url + '/threat_defence.php?defence=1'
 		self.comment_alert = u''
 		self.listPageUrlFormat = self.base_url + '/torrents.php?search={0}&category={1}&page={2}'
+		self.listPageUrlFormatRaw = self.base_url + '/torrents.php?category={0}&page={1}'
 		self.data_dir = '../rarbg_data/'
 		
 	
@@ -127,31 +128,44 @@ class RBTorrentTrawler:
 		return False
 		
 		skip_title_list = [
-			'AllOver30',
-			'Anilos',
-			'Nubiles',
+			# 솔로 & 레즈
+			'AllOver30.',
+			'AbbyWinters.',
+			'ALSScan.',
+			'Anilos.',
+			'ATKExotics.',
+			'ATKGalleria.',
+			'ATKHairy.',
+			'Cosmid.',
+			'DogHouseDigital.',
+			'KarupsHA.',
+			'KarupsOW.',
+			'LadyVoyeurs.',
+			'MetArtX.',
+			'Nubiles.',
+			'SexArt.',
+			'TurningTwistys.',
+			'WankItNow.',
+			'WetAndPuffy.',
+
+			# 오크
+			'AbbyWinters.',
+			'MommyBlowsBest.',
+			'PlumperPass.',
 			
-			'AbbyWinters',
-			'ATKExotics',
-			'ATKGalleria',
-			'ATKHairy',
+
+			# 1회 걸린 놈들
 			'Bryci',
 			'EuroGirlsOnGirls',
 			'FacialAbuse',
 			'FTVGirls',
 			'GirlsOutWest',
 			'GrandMams',
-			'LadyVoyeurs',
-			'MetArt',
 			'MomsLickTeens',
 			'KatieBanks',
 			'OldYoungLesbianLove',
-			'PlumperPass',
 			'PornMegaLoad',
 			'RestrainedElegance',
-			'SexArt',
-			'WetAndPuffy',
-			'WankItNow',
 			]
 		
 		for st in skip_title_list:
@@ -256,7 +270,8 @@ class RBTorrentTrawler:
 		
 		while completed == False:
 			page = page + 1
-			list_url = self.listPageUrlFormat.format('1080', '4', page)
+			#list_url = self.listPageUrlFormat.format('1080', '4', page)
+			list_url = self.listPageUrlFormatRaw.format('4', page)
 			
 			self.log.info('')
 			self.log.info('Page: {0} / {1}'.format(page, list_url))
@@ -277,6 +292,7 @@ class RBTorrentTrawler:
 				date = date_info.get_text().split()[0]
 				time = date_info.get_text().split()[1]
 				
+				if title.find('1080') == -1: continue
 				
 				if (date > target_date): 
 					self.log.info('')
