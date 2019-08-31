@@ -130,6 +130,7 @@ class RBTorrentTrawler:
 		skip_title_list = [
 			# 솔로 & 레즈
 			'ALSScan.',
+			'AllGirlMassage.',
 			'ATKGalleria.',
 			'ATKHairy.',
 			'ATKGirlfriends.',
@@ -168,6 +169,20 @@ class RBTorrentTrawler:
 			'FTVGirls.',
 			'SweetheartVideo.',
 			'TheLifeErotic.',
+			'MommysGirl.',
+			'Beauty-Angels.',
+			'DigitalDesire.',
+			'GirlsGoneWild.',
+			'NothingButCurves.',
+			'AGirlKnows.',
+			'FallInLovia.',
+			'LetsTryAnal.',
+			'RealGirlsGoneBad.',
+			'HollyRandall.',
+			'MomsOnMoms.',
+			'LezCuties.',
+			'VickyAtHome.',
+			'MomsLickTeens.',
 
 			# 오크
 			'AbbyWinters.',
@@ -178,6 +193,8 @@ class RBTorrentTrawler:
 			'PlumperPass.',
 			'GrandMams.',
 			'MatureNL.',
+			'SexMex.',
+			'PornMegaLoad', # mixed
 
 			# 애널
 			'AssholeFever.',
@@ -186,53 +203,50 @@ class RBTorrentTrawler:
 			'SimplyAnal.',
 			'21EroticAnal.',
 			'FirstAnalQuest.',
+			'AnalTeenAngels.',
 			
 			# 1회 걸린 놈들
 			'''
 			'1By-Day.',
 			'AssTraffic.',
-			'AllGirlMassage.',
-			'AGirlKnows.',
 			'Aziani.',
 			'ATKExotics.',
-			'Beauty-Angels.',
 			'BlowBangGirls.',
 			'Bryci',
 			'BruceAndMorgan.',
 			'Defloration.'
 			'DDFBusty.',
 			'DogHouseDigital.',
-			'DigitalDesire.',
+			'Dyked.',
 			'EuroGirlsOnGirls',
-			'FallInLovia.',
 			'FacialAbuse',
 			'FemJoy.',
+			'FoxxedUp.',
 			'FTVGirls',
+			'FullOfJOI.',
 			'FisterTwister.',
 			'GirlsOutWest',
-			'GirlsGoneWild.',
-			'HollyRandall.',
 			'HotLegsAndFeet.',
 			'KatieBanks',
 			'KarupsPC.', #mixed
+			'LANewGirl.',
+			'LiseySweet.',
 			'LoneMilf.',
 			'MagmaFilm.',
 			'MommyBlowsBest.',
 			'MomPov.', # mixed
-			'MommysGirl.,
 			'MomsLickTeens',
 			'Mylfed.',
-			'NothingButCurves.',
 			'PetiteHDPorn.',
-			'PornMegaLoad', # mixed
 			'PornstarPlatinum.',
+			'POVPerv.',
 			'RestrainedElegance',
-			'RealGirlsGoneBad.',
 			'SexArt.',
 			'TurningTwistys.',
-			'TheWhiteBoxxx.', #2차 경고
+			'TheWhiteBoxxx.', #2차 경고 #mixed
 			'Twistys.',
-			'VickyAtHome.',
+			'TurningTwistys.',
+			'VIPissy.',
 			'Watch4Beauty.',
 			'WatchYourMom.',
 			'WeLiveTogether.',
